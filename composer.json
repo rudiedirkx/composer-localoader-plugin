@@ -1,0 +1,15 @@
+{
+    "name": "rdx/composer-localoader-plugin",
+    "type": "composer-plugin",
+    "require": {
+        "composer-plugin-api": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "rdx\\localoader\\": ""
+        }
+    },
+    "extra": {
+        "class": "rdx\\localoader\\Plugin"
+    }
+}
