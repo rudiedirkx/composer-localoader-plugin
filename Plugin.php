@@ -6,6 +6,7 @@ use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\ScriptEvents;
+use Composer\Script\Event;
 use Composer\EventDispatcher\EventSubscriberInterface;
 
 class Plugin implements PluginInterface, EventSubscriberInterface {
@@ -26,7 +27,6 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 	 */
 	public static function getSubscribedEvents() {
 		return array(
-			ScriptEvents::PRE_AUTOLOAD_DUMP => 'onPreAutoloadDump',
 			ScriptEvents::POST_AUTOLOAD_DUMP => 'onPostAutoloadDump',
 		);
 	}
@@ -34,25 +34,19 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 	/**
 	 *
 	 */
-	public function onPreAutoloadDump($event) {
+	public function onPostAutoloadDump(Event $event) {
+		$vendorDir = $event->getComposer()->getConfig()->get('vendor-dir');
+var_dump($vendorDir);
 
-		echo __METHOD__ . "\n";
-		var_dump(get_class($event));
-		// print_r($event);
-		// exit;
-
+		rename($vendorDir . '/autoload.php', $vendorDir . '/autoload-composer.php');
+		copy(__DIR__ . '/autoload-dev.php', $vendorDir . '/autoload.php');
 	}
 
 	/**
 	 *
 	 */
-	public function onPostAutoloadDump($event) {
-
-		echo __METHOD__ . "\n";
+	static public function localoadCommand(Event $event) {
 		var_dump(get_class($event));
-		// print_r($event);
-		// exit;
-
 	}
 
 }

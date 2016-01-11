@@ -9,6 +9,9 @@
             "rdx\\localoader\\": ""
         }
     },
+    "scripts": {
+        "locaload": "rdx\\localoader\\Plugin::localoadCommand",
+    },
     "extra": {
         "class": "rdx\\localoader\\Plugin"
     }
