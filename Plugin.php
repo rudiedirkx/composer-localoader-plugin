@@ -2,12 +2,15 @@
 
 namespace rdx\localoader;
 
+use Exception;
+use InvalidArgumentException;
 use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\ScriptEvents;
 use Composer\Script\Event;
 use Composer\EventDispatcher\EventSubscriberInterface;
+use Composer\Json\JsonFile;
 
 class Plugin implements PluginInterface, EventSubscriberInterface {
 
@@ -36,7 +39,6 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 	 */
 	public function onPostAutoloadDump(Event $event) {
 		$vendorDir = $event->getComposer()->getConfig()->get('vendor-dir');
-var_dump($vendorDir);
 
 		rename($vendorDir . '/autoload.php', $vendorDir . '/autoload-composer.php');
 		copy(__DIR__ . '/autoload-dev.php', $vendorDir . '/autoload.php');
@@ -46,7 +48,24 @@ var_dump($vendorDir);
 	 *
 	 */
 	static public function localoadCommand(Event $event) {
-		var_dump(get_class($event));
+		$vendorDir = $event->getComposer()->getConfig()->get('vendor-dir');
+		$rootDir = dirname($vendorDir);
+
+		$args = $event->getArguments();
+		if (count($args) < 2) {
+			throw new InvalidArgumentException('This command requires 2 arguments: namespace location');
+		}
+
+		$localoadJson = new JsonFile($rootDir . '/composer-locaload.json');
+		try {
+			$locaload = $localoadJson->read();
+		}
+		catch (Exception $ex) {
+			$locaload = array();
+		}
+
+		$locaload[ $args[0] ] = $args[1];
+		$localoadJson->write($locaload);
 	}
 
 }
