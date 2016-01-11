@@ -44,8 +44,10 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 		$global = $config->get('home') == dirname($vendorDir);
 
 		if (!$global) {
-			rename($vendorDir . '/autoload.php', $vendorDir . '/autoload-composer.php');
-			copy(__DIR__ . '/autoload-dev.php', $vendorDir . '/autoload.php');
+			if (file_exists($from = __DIR__ . '/autoload-dev.php')) {
+				rename($vendorDir . '/autoload.php', $vendorDir . '/autoload-composer.php');
+				copy($from, $vendorDir . '/autoload.php');
+			}
 		}
 	}
 
