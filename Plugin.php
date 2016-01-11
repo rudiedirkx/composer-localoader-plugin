@@ -5,7 +5,7 @@ namespace rdx\localoader;
 use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
-use Composer\Plugin\PluginEvents;
+use Composer\Script\ScriptEvents;
 use Composer\EventDispatcher\EventSubscriberInterface;
 
 class Plugin implements PluginInterface, EventSubscriberInterface {
@@ -26,8 +26,8 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 	 */
 	public static function getSubscribedEvents() {
 		return array(
-			PluginEvents::PRE_AUTOLOAD_DUMP => 'onPreAutoloadDump',
-			PluginEvents::POST_AUTOLOAD_DUMP => 'onPostAutoloadDump',
+			ScriptEvents::PRE_AUTOLOAD_DUMP => 'onPreAutoloadDump',
+			ScriptEvents::POST_AUTOLOAD_DUMP => 'onPostAutoloadDump',
 		);
 	}
 
@@ -38,7 +38,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 
 		echo __METHOD__ . "\n";
 		print_r($event);
-		exit;
+		// exit;
 
 	}
 
@@ -49,7 +49,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 
 		echo __METHOD__ . "\n";
 		print_r($event);
-		exit;
+		// exit;
 
 	}
 
