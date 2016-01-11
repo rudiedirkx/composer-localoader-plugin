@@ -37,7 +37,8 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 	public function onPreAutoloadDump($event) {
 
 		echo __METHOD__ . "\n";
-		print_r($event);
+		var_dump(get_class($event));
+		// print_r($event);
 		// exit;
 
 	}
@@ -48,7 +49,8 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 	public function onPostAutoloadDump($event) {
 
 		echo __METHOD__ . "\n";
-		print_r($event);
+		var_dump(get_class($event));
+		// print_r($event);
 		// exit;
 
 	}
