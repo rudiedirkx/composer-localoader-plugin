@@ -38,10 +38,15 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 	 *
 	 */
 	public function onPostAutoloadDump(Event $event) {
-		$vendorDir = $event->getComposer()->getConfig()->get('vendor-dir');
+		$config = $event->getComposer()->getConfig();
+		$vendorDir = $config->get('vendor-dir');
 
-		rename($vendorDir . '/autoload.php', $vendorDir . '/autoload-composer.php');
-		copy(__DIR__ . '/autoload-dev.php', $vendorDir . '/autoload.php');
+		$global = $config->get('home') == dirname($vendorDir);
+
+		if (!$global) {
+			rename($vendorDir . '/autoload.php', $vendorDir . '/autoload-composer.php');
+			copy(__DIR__ . '/autoload-dev.php', $vendorDir . '/autoload.php');
+		}
 	}
 
 	/**
