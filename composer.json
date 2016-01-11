@@ -1,5 +1,6 @@
 {
     "name": "rdx/composer-localoader-plugin",
+    "description": "Composer plugin to load some dependencies locally",
     "type": "composer-plugin",
     "require": {
         "composer-plugin-api": "^1.0"
@@ -10,7 +11,7 @@
         }
     },
     "scripts": {
-        "locaload": "rdx\\localoader\\Plugin::localoadCommand",
+        "locaload": "rdx\\localoader\\Plugin::localoadCommand"
     },
     "extra": {
         "class": "rdx\\localoader\\Plugin"
