@@ -63,16 +63,13 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 			throw new InvalidArgumentException('This command requires 2 arguments: namespace location');
 		}
 
-		$localoadJson = new JsonFile($rootDir . '/composer-locaload.json');
-		try {
-			$locaload = $localoadJson->read();
-		}
-		catch (Exception $ex) {
-			$locaload = array();
-		}
+		// @todo Validate input: trailing \ and /
+		// @todo Read with json_decode() & file_get_contents()
+		// @todo Write with json_encode() & file_put_contents()
+		// @todo Remove referenced dir from vendor/
 
-		$locaload[ $args[0] ] = $args[1];
-		$localoadJson->write($locaload);
+		// File format:
+		// {"psr-4": {"rdx\\http\\": "/var/www/inc/HTTP/"}}
 	}
 
 }
