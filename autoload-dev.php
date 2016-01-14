@@ -2,15 +2,16 @@
 
 $autoloader = require __DIR__ . '/autoload-composer.php';
 
-try {
-	$localoadJson = new JsonFile(__DIR__ . '/../composer-locaload.json');
-	$locaload = $localoadJson->read();
-	foreach ($locaload as $namespace => $location) {
-		$autoloader->setPsr4($namespace, $location);
+if (file_exists($file = __DIR__ . '/../composer-locaload.json')) {
+	if ($json = @file_get_contents($file)) {
+		if ($meta = @json_decode($json, true)) {
+			if (isset($meta['psr-4']) && is_array($meta['psr-4'])) {
+				foreach ($meta['psr-4'] as $namespace => $location) {
+					$autoloader->setPsr4($namespace, $location);
+				}
+			}
+		}
 	}
-}
-catch (Exception $ex) {
-	// File doesn't exist, or is unreadable, or has invalid JSON
 }
 
 return $autoloader;
