@@ -16,11 +16,10 @@ if (!file_exists(getcwd() . '/composer.json')) {
 $meta = array();
 if (file_exists($file = getcwd() . '/composer-locaload.json')) {
 	if ($json = @file_get_contents($file)) {
-		if ($meta = @json_decode($json, true)) {
-			$meta += array('psr-4' => array());
-		}
+		$meta = @json_decode($json, true) ?: array();
 	}
 }
+$meta += array('psr-4' => array());
 
 // Rebuild
 if (!$args) {
