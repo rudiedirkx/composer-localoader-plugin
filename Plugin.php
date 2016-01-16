@@ -51,25 +51,4 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 		}
 	}
 
-	/**
-	 *
-	 */
-	static public function localoadCommand(Event $event) {
-		$vendorDir = $event->getComposer()->getConfig()->get('vendor-dir');
-		$rootDir = dirname($vendorDir);
-
-		$args = $event->getArguments();
-		if (count($args) < 2) {
-			throw new InvalidArgumentException('This command requires 2 arguments: namespace location');
-		}
-
-		// @todo Validate input: trailing \ and /
-		// @todo Read with json_decode() & file_get_contents()
-		// @todo Write with json_encode() & file_put_contents()
-		// @todo Remove referenced dir from vendor/
-
-		// File format:
-		// {"psr-4": {"rdx\\http\\": "/var/www/inc/HTTP/"}}
-	}
-
 }

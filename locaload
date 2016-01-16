@@ -1,0 +1,56 @@
+#!/usr/bin/env php
+<?php
+
+$args = array_slice($_SERVER['argv'], 1);
+echo "\n";
+
+// Find project's composer.json
+if (!file_exists(getcwd() . '/composer.json')) {
+	echo "You must be in a project root to do this.\n";
+
+	echo "\n";
+	exit(1);
+}
+
+// Read from existing JSON, or create new structure
+$meta = array();
+if (file_exists($file = getcwd() . '/composer-locaload.json')) {
+	if ($json = @file_get_contents($file)) {
+		if ($meta = @json_decode($json, true)) {
+			$meta += array('psr-4' => array());
+		}
+	}
+}
+
+// Rebuild
+if (!$args) {
+	// @todo Remove dirs that are in psr-4 and exist
+	// @todo Warn about dirs in psr-4 that don't exist
+
+	echo "Currently loading:\n";
+	print_r($meta['psr-4']);
+
+	echo "\n";
+	exit(0);
+}
+
+// Add namespace => location
+elseif (count($args) == 2) {
+	$meta['psr-4'][ $args[0] ] = $args[1];
+	file_put_contents($file, json_encode($meta));
+
+	echo "PSR-4 exception added. Currently:\n";
+	print_r($meta['psr-4']);
+
+	echo "\n";
+	exit(0);
+}
+
+echo "Invalid args. Must be 0 (rebuild) or 2 (namespace & location)\n";
+echo "\n";
+exit(1);
+
+
+
+// File format:
+// {"psr-4": {"rdx\\http\\": "/var/www/inc/HTTP/"}}

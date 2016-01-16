@@ -10,10 +10,11 @@
             "rdx\\localoader\\": ""
         }
     },
-    "scripts": {
-        "locaload": "rdx\\localoader\\Plugin::localoadCommand"
-    },
+    "bin": [
+        "laravel"
+    ],
     "extra": {
         "class": "rdx\\localoader\\Plugin"
-    }
+    },
+    "license": "MIT"
 }
