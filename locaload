@@ -41,6 +41,8 @@ elseif (count($args) == 2) {
 	echo "PSR-4 exception added. Currently:\n";
 	print_r($meta['psr-4']);
 
+	// @todo `composer dumpautoload`
+
 	echo "\n";
 	exit(0);
 }
