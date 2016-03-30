@@ -7,7 +7,7 @@ if (file_exists($file = __DIR__ . '/../composer-locaload.json')) {
 		if ($meta = @json_decode($json, true)) {
 			if (isset($meta['psr-4']) && is_array($meta['psr-4'])) {
 				foreach ($meta['psr-4'] as $namespace => $location) {
-					$autoloader->setPsr4($namespace, $location);
+					$autoloader->setPsr4(rtrim($namespace, '\\'), rtrim($location, '\\/'));
 				}
 			}
 		}

@@ -35,7 +35,7 @@ if (!$args) {
 
 // Add namespace => location
 elseif (count($args) == 2) {
-	$meta['psr-4'][ $args[0] ] = $args[1];
+	$meta['psr-4'][ rtrim($args[0], '\\') ] = rtrim($args[1], '\\/');
 	file_put_contents($file, json_encode($meta));
 
 	echo "PSR-4 exception added. Currently:\n";
