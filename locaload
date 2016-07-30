@@ -19,7 +19,6 @@ if (file_exists($file = getcwd() . '/composer-locaload.json')) {
 		$meta = @json_decode($json, true) ?: array();
 	}
 }
-$meta += array('psr-4' => array());
 
 // Rebuild
 if (!$args) {
@@ -27,19 +26,25 @@ if (!$args) {
 	// @todo Warn about dirs in psr-4 that don't exist
 
 	echo "Currently loading:\n";
-	print_r($meta['psr-4']);
+	print_r($meta);
 
 	echo "\n";
 	exit(0);
 }
 
+// Target specific PSR
+$psr = '4';
+if (count($args) == 3) {
+	$psr = array_shift($args);
+}
+
 // Add namespace => location
-elseif (count($args) == 2) {
-	$meta['psr-4'][ rtrim($args[0], '\\') ] = rtrim($args[1], '\\/');
+if (count($args) == 2) {
+	$meta["psr-$psr"][ rtrim($args[0], '\\/') ] = rtrim($args[1], '\\/');
 	file_put_contents($file, json_encode($meta));
 
-	echo "PSR-4 exception added. Currently:\n";
-	print_r($meta['psr-4']);
+	echo "PSR-$psr exception added. Currently:\n";
+	print_r($meta);
 
 	// @todo `composer dumpautoload`
 
@@ -47,11 +52,11 @@ elseif (count($args) == 2) {
 	exit(0);
 }
 
-echo "Invalid args. Must be 0 (rebuild) or 2 (namespace & location)\n";
+echo "Invalid args. Must be 0 (rebuild), or 2 (namespace, location), or 3 (psr, namespace, location)\n";
 echo "\n";
 exit(1);
 
 
 
 // File format:
-// {"psr-4": {"rdx\\http\\": "/var/www/inc/HTTP/"}}
+// {"psr-4": {"rdx\\http": "/var/www/inc/HTTP"}}
