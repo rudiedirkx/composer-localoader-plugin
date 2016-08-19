@@ -40,8 +40,11 @@ if (count($args) == 3) {
 
 // Add namespace => location
 if (count($args) == 2) {
-	$meta["psr-$psr"][ rtrim($args[0], '\\/') ] = rtrim($args[1], '\\/');
-	file_put_contents($file, json_encode($meta));
+	$normalize = function($str) {
+		return rtrim(str_replace('\\', '/', $str), '/');
+	};
+	$meta["psr-$psr"][ $normalize($args[0]) ] = $normalize($args[1]);
+	file_put_contents($file, json_encode($meta, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
 	echo "PSR-$psr exception added. Currently:\n";
 	print_r($meta);
