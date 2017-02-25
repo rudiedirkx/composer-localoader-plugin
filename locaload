@@ -49,7 +49,7 @@ if (count($args) == 2) {
 	echo "PSR-$psr exception added. Currently:\n";
 	print_r($meta);
 
-	`composer dumpautoload`
+	`composer dumpautoload`;
 
 	echo "\n";
 	exit(0);
