@@ -121,9 +121,11 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 
 		$localoaded = [];
 		foreach ($this->getPackageNames() as $package_name) {
-			foreach ($this->getPackageAutoload($package_name) as $namespace => $dir) {
+			foreach ($this->getPackageAutoload($package_name) as $namespace => $dirs) {
 				if (in_array($this->normalizeNamespace($namespace), $localNamespaces)) {
-					$localoaded["$package_name:$namespace"] = $this->getPackageDir($package_name) . '/'. trim($dir, '\\/');
+					foreach ($dirs as $i => $dir) {
+						$localoaded["$package_name:$namespace:$i"] = $this->getPackageDir($package_name) . '/'. trim($dir, '\\/');
+					}
 				}
 			}
 		}
@@ -139,11 +141,13 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 		$data = json_decode(file_get_contents($file), true);
 
 		$namespaces = [];
-		foreach ((array) @$data['autoload']['psr-0'] as $namespace => $dir) {
-			$namespaces[$namespace] = $dir . '/' . str_replace('\\', '/', $namespace);
+		foreach ((array) @$data['autoload']['psr-0'] as $namespace => $dirs) {
+			$namespaces[$namespace] = array_map(function($dir) use ($namespace) {
+				return $dir . '/' . str_replace('\\', '/', $namespace);
+			}, (array) $dirs);
 		}
-		foreach ((array) @$data['autoload']['psr-4'] as $namespace => $dir) {
-			$namespaces[$namespace] = $dir;
+		foreach ((array) @$data['autoload']['psr-4'] as $namespace => $dirs) {
+			$namespaces[$namespace] = (array) $dirs;
 		}
 
 		return $namespaces;
