@@ -49,7 +49,7 @@ if (count($args) == 2) {
 	echo "PSR-$psr exception added. Currently:\n";
 	print_r($meta);
 
-	// @todo `composer dumpautoload`
+	`composer dumpautoload`
 
 	echo "\n";
 	exit(0);
@@ -62,4 +62,4 @@ exit(1);
 
 
 // File format:
-// {"psr-4": {"rdx\\http": "/var/www/inc/HTTP"}}
+// {"psr-4": {"rdx/http": "/var/www/inc/HTTP"}}
