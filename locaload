@@ -1,65 +1,10 @@
 #!/usr/bin/env php
 <?php
 
-$args = array_slice($_SERVER['argv'], 1);
-echo "\n";
+use rdx\localoader\Application;
+use rdx\localoader\Localoader;
 
-// Find project's composer.json
-if (!file_exists(getcwd() . '/composer.json')) {
-	echo "You must be in a project root to do this.\n";
+require __DIR__ . '/vendor/autoload.php';
 
-	echo "\n";
-	exit(1);
-}
-
-// Read from existing JSON, or create new structure
-$meta = array();
-if (file_exists($file = getcwd() . '/composer-locaload.json')) {
-	if ($json = @file_get_contents($file)) {
-		$meta = @json_decode($json, true) ?: array();
-	}
-}
-
-// Rebuild
-if (!$args) {
-	// @todo Remove dirs that are in psr-4 and exist
-	// @todo Warn about dirs in psr-4 that don't exist
-
-	echo "Currently loading:\n";
-	print_r($meta);
-
-	echo "\n";
-	exit(0);
-}
-
-// Target specific PSR
-$psr = '4';
-if (count($args) == 3) {
-	$psr = array_shift($args);
-}
-
-// Add namespace => location
-if (count($args) == 2) {
-	$normalize = function($str) {
-		return rtrim(str_replace('\\', '/', $str), '/');
-	};
-	$meta["psr-$psr"][ $normalize($args[0]) ] = $normalize($args[1]);
-	file_put_contents($file, json_encode($meta, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-
-	echo "PSR-$psr exception added. Currently:\n";
-	print_r($meta);
-
-	`composer dumpautoload`;
-
-	echo "\n";
-	exit(0);
-}
-
-echo "Invalid args. Must be 0 (rebuild), or 2 (namespace, location), or 3 (psr, namespace, location)\n";
-echo "\n";
-exit(1);
-
-
-
-// File format:
-// {"psr-4": {"rdx/http": "/var/www/inc/HTTP"}}
+$app = new Application(new Localoader(getcwd()));
+var_dump($app->run());

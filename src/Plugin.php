@@ -43,6 +43,8 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 		$config = $event->getComposer()->getConfig();
 		$vendorDir = $config->get('vendor-dir');
 
+		// @todo Use rdx\localoader\Localoader's logic
+
 		$global = $config->get('home') == dirname($vendorDir);
 
 		if (!$global) {
@@ -71,6 +73,9 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 	 *
 	 */
 	protected function removeAllReleaseCode($event) {
+
+		// @todo Use rdx\localoader\Localoader's logic
+
 		$localoaded = $this->getLocaloadedPackages();
 
 		foreach ($localoaded as $packageNamespace => $dir) {
