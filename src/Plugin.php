@@ -53,6 +53,8 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 				copy($from, $vendorDir . '/autoload.php');
 			}
 		}
+
+		$this->removeAllReleaseCode($event);
 	}
 
 	/**
@@ -73,12 +75,18 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 	 *
 	 */
 	protected function removeAllReleaseCode($event) {
-
 		// @todo Use rdx\localoader\Localoader's logic
+
+		// @todo Check if we should remove anything at all: #6
 
 		$localoaded = $this->getLocaloadedPackages();
 
+		$unprefix = function($dir) {
+			return preg_replace('#' . getcwd() . '/vendor/#', '', $dir);
+		};
+
 		foreach ($localoaded as $packageNamespace => $dir) {
+			echo "Removing code from " . $unprefix($dir) . "\n";
 			`rm -rf $dir`;
 		}
 
@@ -148,11 +156,13 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 		$namespaces = [];
 		foreach ((array) @$data['autoload']['psr-0'] as $namespace => $dirs) {
 			$namespaces[$namespace] = array_map(function($dir) use ($namespace) {
-				return $dir . '/' . str_replace('\\', '/', $namespace);
+				return rtrim($dir, '\\/') . '/' . str_replace('\\', '/', $namespace);
 			}, (array) $dirs);
 		}
 		foreach ((array) @$data['autoload']['psr-4'] as $namespace => $dirs) {
-			$namespaces[$namespace] = (array) $dirs;
+			$namespaces[$namespace] = array_map(function($dir) {
+				return rtrim($dir, '\\/');
+			}, (array) $dirs);
 		}
 
 		return $namespaces;

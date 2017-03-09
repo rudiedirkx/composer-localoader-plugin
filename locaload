@@ -3,8 +3,17 @@
 
 use rdx\localoader\Application;
 use rdx\localoader\Localoader;
+use rdx\localoader\LocaloaderException;
 
-require __DIR__ . '/vendor/autoload.php';
+if (!file_exists($file = __DIR__ . '/vendor/autoload.php')) {
+	exit("Missing autoload.php... Project installed?\n");
+}
+require $file;
 
-$app = new Application(new Localoader(getcwd()));
-var_dump($app->run());
+try {
+	$app = new Application(new Localoader(getcwd()));
+	$app->run();
+}
+catch (LocaloaderException $ex) {
+	exit($ex->getMessage() . "\n");
+}
