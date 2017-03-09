@@ -5,35 +5,21 @@ Localoader adds a binary `locaload` with which you can choose to load dependenci
 locally instead of using the Packagist version. This is especially useful when
 developing your own packages, or others, in an existing project or context.
 
-You still have to `composer require` the dependency, and it still exists on disk,
-but that version won't be loaded.
+**N.B.** You still have to `composer require` the dependency!
 
-Use it
----
+## Use it
 
-	# Default is PSR-4
-	locaload add Author\\Package /var/www/dev/packages/AuthorPackage
+Alias an entire package:
 
-	# Change PSR to 0
-	locaload add -psr0 Author\\Package /var/www/dev/packages/AuthorPackage
+	locaload alias author/some-package /var/www/dev/packages/author-some-package
 
-This will add a file `composer-locaload.json` in the project's root, and override
-the project's `vendor/autoload.php`, and remove the aliased unused code from `/vendor/`.
+Argument 1 is the Composer package name: `author/some-package`.
 
-**N.B.** This does not alias an entire package! Or even all of its autoloads. It only
-aliases the specified namespace(s).
+Argument 2 is the location of your checkout of that package: `/var/www/dev/packages/author-some-package`.
 
-**N.B.** Don't forget to escape backslashes! Bash will remove a single `\`, so be sure
-to make it a `\\`, or use a `/` in the namespace. `locaload` will understand:
+This will create and maintain a symlink from Composer's vendor dir to your dev checkout.
 
-	# Forward slashed namespaces are supported
-	locaload add Author/Package /var/www/dev/packages/AuthorPackage
-
-**N.B.** This looks like you're referencing the Packagist package name, but you're
-not! You're referencing the **PHP namespace** in the package's `composer.json`.
-
-Check it
----
+## Check it
 
 To see which packages are 'localoaded':
 
@@ -44,8 +30,14 @@ Output will be something like:
 	Currently loading:
 	Array
 	(
-	    [psr-4] => Array
+	    [alias] => Array
 	        (
-				[rdx\laraveleagerrelationships] => /var/www/tests/composer/laravel-eager-relationships
+				[author/some-package] => /var/www/dev/packages/author-some-package
 			)
 	)
+
+### Deprecation warning
+
+This package used to load namespaces locally, without symlink, but that didn't include all of
+Composer's `"autoload"` properties. Your `composer-locaload.json` might have `psr-0` or `psr-4`
+config. Remove that, and replace it with `alias`.
