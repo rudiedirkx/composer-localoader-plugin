@@ -54,7 +54,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 			}
 		}
 
-		$this->removeAllReleaseCode($event);
+		// $this->removeAllReleaseCode($event);
 		$this->symlinkAllReleaseCode($event);
 	}
 
@@ -62,7 +62,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 	 *
 	 */
 	public function onPostInstall(Event $event) {
-		$this->removeAllReleaseCode($event);
+		// $this->removeAllReleaseCode($event);
 		$this->symlinkAllReleaseCode($event);
 	}
 
@@ -70,7 +70,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 	 *
 	 */
 	public function onPostUpdate(Event $event) {
-		$this->removeAllReleaseCode($event);
+		// $this->removeAllReleaseCode($event);
 		$this->symlinkAllReleaseCode($event);
 	}
 
