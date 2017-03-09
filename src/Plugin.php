@@ -55,6 +55,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 		}
 
 		$this->removeAllReleaseCode($event);
+		$this->symlinkAllReleaseCode($event);
 	}
 
 	/**
@@ -62,6 +63,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 	 */
 	public function onPostInstall(Event $event) {
 		$this->removeAllReleaseCode($event);
+		$this->symlinkAllReleaseCode($event);
 	}
 
 	/**
@@ -69,17 +71,41 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 	 */
 	public function onPostUpdate(Event $event) {
 		$this->removeAllReleaseCode($event);
+		$this->symlinkAllReleaseCode($event);
 	}
 
 	/**
 	 *
 	 */
-	protected function removeAllReleaseCode($event) {
+	protected function symlinkAllReleaseCode(Event $event) {
+		// @todo Use rdx\localoader\Localoader's logic
+
+		$localoaded = $this->getLocaloadedPackages();
+
+		foreach ($localoaded as $packageName => $source) {
+			$packageDir = $this->getPackageDir($packageName);
+
+			echo "Symlinking package " . $packageName . "\n";
+			`rm -rf $packageDir`;
+			`ln -fs $source $packageDir`;
+		}
+	}
+
+	/**
+	 *
+	 */
+	protected function removeAllReleaseCode(Event $event) {
 		// @todo Use rdx\localoader\Localoader's logic
 
 		// @todo Check if we should remove anything at all: #6
 
-		$localoaded = $this->getLocaloadedPackages();
+		// STOP! Don't remove ANYTHING if we have any aliases, because we don't want
+		// to remove code inside the aliased sources.
+		if ($this->getLocaloadedPackages()) {
+			return;
+		}
+
+		$localoaded = $this->getLocaloadedPackageDirs();
 
 		$unprefix = function($dir) {
 			return preg_replace('#' . getcwd() . '/vendor/#', '', $dir);
@@ -89,7 +115,20 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 			echo "Removing code from " . $unprefix($dir) . "\n";
 			`rm -rf $dir`;
 		}
+	}
 
+	/**
+	 *
+	 */
+	protected function getLocaloadedPackages() {
+		$meta = array();
+		if (file_exists($file = $this->getRootDir() . '/composer-locaload.json')) {
+			if ($json = @file_get_contents($file)) {
+				$meta = @json_decode($json, true) ?: array();
+			}
+		}
+
+		return (array) @$meta['alias'];
 	}
 
 	/**
@@ -115,8 +154,8 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 		$locker = $this->composer->getLocker();
 		$lockData = $locker->getLockData();
 
-		$package_names = array_column($lockData['packages'], 'name');
-		return $package_names;
+		$packageNames = array_column($lockData['packages'], 'name');
+		return $packageNames;
 	}
 
 	/**
@@ -129,15 +168,15 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 	/**
 	 *
 	 */
-	protected function getLocaloadedPackages() {
+	protected function getLocaloadedPackageDirs() {
 		$localNamespaces = $this->getLocaloadedNamespaces();
 
 		$localoaded = [];
-		foreach ($this->getPackageNames() as $package_name) {
-			foreach ($this->getPackageAutoload($package_name) as $namespace => $dirs) {
+		foreach ($this->getPackageNames() as $packageName) {
+			foreach ($this->getPackageAutoload($packageName) as $namespace => $dirs) {
 				if (in_array($this->normalizeNamespace($namespace), $localNamespaces)) {
 					foreach ($dirs as $i => $dir) {
-						$localoaded["$package_name:$namespace:$i"] = $this->getPackageDir($package_name) . '/'. trim($dir, '\\/');
+						$localoaded["$packageName:$namespace:$i"] = $this->getPackageDir($packageName) . '/'. trim($dir, '\\/');
 					}
 				}
 			}
@@ -149,8 +188,8 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 	/**
 	 *
 	 */
-	protected function getPackageAutoload($package_name) {
-		$file = $this->getPackageDir($package_name) . '/composer.json';
+	protected function getPackageAutoload($packageName) {
+		$file = $this->getPackageDir($packageName) . '/composer.json';
 		$data = json_decode(file_get_contents($file), true);
 
 		$namespaces = [];
@@ -171,8 +210,8 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 	/**
 	 *
 	 */
-	protected function getPackageDir($package_name) {
-		return $this->getVendorDir() . '/' . $package_name;
+	protected function getPackageDir($packageName) {
+		return $this->getVendorDir() . '/' . $packageName;
 	}
 
 	/**
