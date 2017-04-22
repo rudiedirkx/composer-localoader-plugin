@@ -28,8 +28,6 @@ class Localoader {
 	public function getLocaLoads() {
 		$default = [
 			'alias' => [],
-			'psr-0' => [],
-			'psr-4' => [],
 		];
 
 		if ($this->file->exists()) {
@@ -45,16 +43,6 @@ class Localoader {
 	 */
 	protected function saveLocaloads(array $data) {
 		return $this->file->write(array_filter($data));
-	}
-
-	/**
-	 *
-	 */
-	public function addNamespaceException($psr, $namespace, $source) {
-		$data = $this->getLocaLoads();
-		$data["psr-$psr"][$namespace] = $source;
-
-		return $this->saveLocaloads($data);
 	}
 
 	/**
