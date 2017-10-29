@@ -5,7 +5,10 @@ use rdx\localoader\Application;
 use rdx\localoader\Localoader;
 use rdx\localoader\LocaloaderException;
 
-if (!file_exists($file = __DIR__ . '/vendor/autoload.php')) {
+if (
+	!file_exists($file = __DIR__ . '/vendor/autoload.php') &&
+	!file_exists($file = __DIR__ . '/../autoload.php')
+) {
 	exit("Missing autoload.php... Project installed?\n");
 }
 require $file;
