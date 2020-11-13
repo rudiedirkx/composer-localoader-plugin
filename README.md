@@ -7,6 +7,10 @@ developing your own packages, or others, in an existing project or context.
 
 **N.B.** You still have to `composer require` the dependency!
 
+## Install
+
+    composer global require rdx/composer-localoader-plugin
+
 ## Use it
 
 Alias an entire package:
