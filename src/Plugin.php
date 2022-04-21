@@ -74,7 +74,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 		foreach ($localoaded as $packageName => $source) {
 			$packageDir = $this->getPackageDir($packageName);
 
-			echo "Symlinking package " . $packageName . "\n";
+			echo "Symlinking package $packageName -> $source\n";
 			`rm -rf $packageDir`;
 			`ln -fs $source $packageDir`;
 		}
@@ -85,7 +85,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 	 */
 	protected function getLocaloadedPackages() {
 		$meta = array();
-		if (file_exists($file = $this->getRootDir() . '/composer-locaload.json')) {
+		if (file_exists($file = $this->getRootDir() . '/' . Localoader::FILE)) {
 			if ($json = @file_get_contents($file)) {
 				$meta = @json_decode($json, true) ?: array();
 			}
@@ -98,7 +98,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 	 *
 	 */
 	protected function getPackageDir($packageName) {
-		return $this->getVendorDir() . '/' . $packageName;
+		return $this->getVendorDir() . '/' . Localoader::encodePackage($packageName);
 	}
 
 	/**

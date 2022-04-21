@@ -19,10 +19,12 @@ class ListCommand extends Command {
 	/**
 	 *
 	 */
-	protected function execute(InputInterface $input, OutputInterface $output) {
+	protected function execute(InputInterface $input, OutputInterface $output) : int {
 		$localoader = $this->getApplication()->getLocaloader();
 
 		$output->writeLn(print_r($localoader->getLocaLoads(), 1));
+
+		return 0;
 	}
 
 }

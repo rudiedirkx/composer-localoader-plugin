@@ -7,8 +7,9 @@ use rdx\localoader\LocaloaderException;
 
 class Localoader {
 
-	const FILE = 'composer-locaload.json';
+	const FILE = 'composer.locaload';
 
+	protected $dir;
 	protected $file;
 
 	/**
@@ -19,6 +20,7 @@ class Localoader {
 			throw new LocaloaderException("Localoader must be run in a project's root.");
 		}
 
+		$this->dir = $dir;
 		$this->file = new JsonFile($dir . '/' . self::FILE);
 	}
 
@@ -48,9 +50,26 @@ class Localoader {
 	/**
 	 *
 	 */
+	public function validatePackage($package) {
+		$package = self::encodePackage($package);
+		$packageDir = $this->dir . '/vendor/' . $package;
+		return strpos($package, '/') !== false && is_dir($packageDir);
+	}
+
+	/**
+	 *
+	 */
+	public function validateSource($source) {
+		$source = self::encodeSource($source);
+		return file_exists("$source/composer.json");
+	}
+
+	/**
+	 *
+	 */
 	public function addPackageException($package, $source) {
 		$data = $this->getLocaLoads();
-		$data["alias"][$package] = $source;
+		$data["alias"][$package] = self::encodeSource($source);
 
 		return $this->saveLocaloads($data);
 	}
@@ -58,15 +77,15 @@ class Localoader {
 	/**
 	 *
 	 */
-	static public function encodeNamespace($namespace) {
-		return trim(str_replace('\\', '/', $namespace), '/');
+	static public function encodeSource($source) {
+		return rtrim(str_replace('\\', '/', $source), '/');
 	}
 
 	/**
 	 *
 	 */
-	static public function encodeSource($source) {
-		return rtrim(str_replace('\\', '/', $source), '/');
+	static public function encodePackage($source) {
+		return trim(str_replace('\\', '/', $source), '/');
 	}
 
 	// @todo Remove localoaded code (called from rdx\localoader\Plugin)

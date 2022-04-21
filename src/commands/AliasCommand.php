@@ -24,19 +24,29 @@ class AliasCommand extends Command {
 	/**
 	 *
 	 */
-	protected function execute(InputInterface $input, OutputInterface $output) {
+	protected function execute(InputInterface $input, OutputInterface $output) : int {
 		$localoader = $this->getApplication()->getLocaloader();
 
 		$args = $input->getArguments();
-		$package = $args['package'];
-		$source = Localoader::encodeSource($args['source']);
 
-		$localoader->addPackageException($package, $source);
+		if (!$localoader->validatePackage($args['package'])) {
+			$output->writeLn(sprintf("ERROR: Invalid package '%s'. You must `require` it first.", $args['package']));
+			return 1;
+		}
+
+		if (!$localoader->validateSource($args['source'])) {
+			$output->writeLn(sprintf("ERROR: Invalid source '%s'. It must be an existing package directory.", $args['source']));
+			return 1;
+		}
+
+		$localoader->addPackageException($args['package'], $args['source']);
 
 		$output->writeLn(print_r($localoader->getLocaLoads(), 1));
 
 		// @todo Call this the 'proper' way?
 		`composer dumpautoload`;
+
+		return 0;
 	}
 
 }
