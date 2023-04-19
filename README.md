@@ -43,5 +43,5 @@ Output will be something like:
 ### Deprecation warning
 
 This package used to load namespaces locally, without symlink, but that didn't include all of
-Composer's `"autoload"` properties. Your `composer-locaload.json` might have `psr-0` or `psr-4`
+Composer's `"autoload"` properties. Your `composer.locaload` might have `psr-0` or `psr-4`
 config. Remove that, and replace it with `alias`.
